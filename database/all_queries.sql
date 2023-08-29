@@ -35,6 +35,7 @@ CREATE TABLE account (
   password VARCHAR,
   role VARCHAR,
   branch_id INTEGER REFERENCES branch(id)
+  confirmation VARCHAR
   -- Create a unique constraint on (id, branch_id) combination
   CONSTRAINT unique_id_branch UNIQUE (id, branch_id)
 );
