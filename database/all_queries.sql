@@ -35,6 +35,7 @@ CREATE TABLE account (
   password VARCHAR,
   role VARCHAR,
   branch_id INTEGER REFERENCES branch(id)
+  confirmation VARCHAR
   -- Create a unique constraint on (id, branch_id) combination
   CONSTRAINT unique_id_branch UNIQUE (id, branch_id)
 );
@@ -110,7 +111,7 @@ CREATE TABLE attendance_event (
 
 
 INSERT INTO branch (id, name, address)
-VALUES (1, 'ChiNhanh1', '123/4');
+VALUES (1, 'Soc Bong Thu DUc', '123/4 Linh Xuan Thu Duc');
 
 INSERT INTO class_room (id, name, branch_id)
 VALUES (1, 'Lop01', 1);
