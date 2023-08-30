@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS branch;
 -- Drop table "account"
 DROP TABLE IF EXISTS account;
 
-  -- Table: branch
+-- Table: branch
 CREATE TABLE branch (
   id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL,
@@ -34,8 +34,8 @@ CREATE TABLE account (
   email VARCHAR,
   password VARCHAR,
   role VARCHAR,
-  branch_id INTEGER REFERENCES branch(id)
-  confirmation VARCHAR
+  confirmation BOOLEAN,
+  branch_id INTEGER REFERENCES branch(id),
   -- Create a unique constraint on (id, branch_id) combination
   CONSTRAINT unique_id_branch UNIQUE (id, branch_id)
 );
