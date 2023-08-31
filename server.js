@@ -15,6 +15,7 @@ const session = require("express-session"); // Session management middleware
 const initializePassport = require("./passport-config.js"); // Custom passport configuration
 const methodOverride = require("method-override");
 const authMiddlewares = require("./middlewares/auth");
+const authMiddlewares = require("./middlewares/auth");
 app.set("view-engine", "ejs"); // Set the view engine to EJS
 app.use(express.json()); // Parse JSON request bodies
 app.use(methodOverride("_method"));
@@ -61,8 +62,12 @@ initializePassport(
 const authRoutes = require("./routes/auth");
 // Use the imported route handling logic
 app.use("/auth", authRoutes);
+const authRoutes = require("./routes/auth");
+// Use the imported route handling logic
+app.use("/auth", authRoutes);
 
 // Take note that req.user is the current user of the session
+app.get("/", authMiddlewares.checkAuthenticated, (req, res) => {
 app.get("/", authMiddlewares.checkAuthenticated, (req, res) => {
   res.render("index.ejs", { name: req.user.name });
 });

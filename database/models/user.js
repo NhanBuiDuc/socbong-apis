@@ -5,6 +5,9 @@ const fetchUserById = async (userId) => {
     .from("users")
     .select("*")
     .eq("id", userId)
+    .from("users")
+    .select("*")
+    .eq("id", userId)
     .single();
 
   if (error) {
@@ -28,6 +31,11 @@ const insertUser = async (email, password, role) => {
 const getAllUsers = async () => {
   const { data, error } = await supabase.from("users").select("*");
 
+  if (error) {
+    console.error(error);
+  } else {
+    console.log("All users:", data);
+  }
   if (error) {
     console.error(error);
   } else {
