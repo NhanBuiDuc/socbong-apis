@@ -14,3 +14,7 @@ export const insertClassRoom = async (classRoomData) => {
     console.log("Class room inserted successfully:", data);
   }
 };
+// Re-export all functions using the spread operator
+module.exports = {
+  insertClassRoom,
+};

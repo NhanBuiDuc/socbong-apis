@@ -4,3 +4,7 @@ const ROLE = {
   ACCOUNTANT: "accountant",
   CLASSROOM_ADMIN: "class_admin",
 };
+// Re-export all functions using the spread operator
+module.exports = {
+  ROLE,
+};
