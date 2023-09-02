@@ -2,9 +2,12 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-accounts = [];
+
+const { getAllAccounts } = require("./database/queries_models/account");
+
 // Import required libraries and modules
 const express = require("express"); // Express web framework
+const path = require("path"); // Import the 'path' module
 const bcrypt = require("bcrypt"); // Library for password hashing
 const app = express(); // Initialize Express app
 const passport = require("passport"); // Authentication library
@@ -12,8 +15,10 @@ const flash = require("express-flash"); // Flash messages for notifications
 const session = require("express-session"); // Session management middleware
 const initializePassport = require("./passport-config.js"); // Custom passport configuration
 const methodOverride = require("method-override");
+const authMiddlewares = require("./middlewares/auth");
+// Configure the 'views' directory
+app.set("views", path.join(__dirname, "views"));
 app.set("view-engine", "ejs"); // Set the view engine to EJS
-
 app.use(express.json()); // Parse JSON request bodies
 app.use(methodOverride("_method"));
 app.use(
@@ -49,75 +54,37 @@ app.use(passport.initialize()); // Initialize Passport
 // allowing access to user information through 'req.user' in subsequent requests.
 app.use(passport.session()); // Use persistent login sessions
 
-// Initialize Passport with custom function
-initializePassport(
-  passport,
-  (email) => accounts.find((account) => account.email === email),
-  (id) => accounts.find((account) => account.id === id)
-);
+const authRoutes = require("./routes/auth");
+const accountRoutes = require("./routes/account");
 
-app.get("/register", checkNotAuthenticated, (req, res) => {
-  res.render("register.ejs");
-});
-app.get("/login", checkNotAuthenticated, (req, res) => {
-  res.render("login.ejs");
-});
-
-app.post("/register", checkNotAuthenticated, async (req, res) => {
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    console.log(salt);
-    console.log(hashedPassword);
-    //push to the database
-    const account = {
-      id: Date.now().toString(),
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPassword,
-    };
-    accounts.push(account);
-    // res.status(201).send();
-    res.redirect("/login");
-  } catch {
-    // res.status(500).send();
-    res.redirect("/register");
-  }
-  console.log(accounts);
-});
-
-app.post(
-  "/login",
-  checkNotAuthenticated,
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/login",
-    failureFlash: true,
-  })
-);
-
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  } else {
-    return res.redirect("/login");
-  }
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect("/");
-  } else {
-    next();
-  }
-}
 // Take note that req.user is the current user of the session
-app.get("/", checkAuthenticated, (req, res) => {
-  res.render("index.ejs", { name: req.user.name });
-});
 
-app.delete("/logout", (req, res) => {
-  req.logOut();
-  res.redirect("/login");
-});
-app.listen(3000);
+const startServer = async () => {
+  try {
+    // Fetch accounts data using getAllAccounts
+    let accounts = await getAllAccounts();
+    console.log("All accounts:", accounts);
+
+    // Initialize Passport with custom function
+    initializePassport(
+      passport,
+      (email) => accounts.find((account) => account.email === email),
+      (id) => accounts.find((account) => account.id === id)
+    );
+
+    // Start the server
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+
+      app.get("/", authMiddlewares.checkAuthenticated, (req, res) => {
+        res.render("index.ejs", { name: req.user.name });
+      });
+      app.use("/auth", authRoutes);
+      app.use("/account", accountRoutes);
+    });
+  } catch (error) {
+    console.error("Error starting server:", error);
+  }
+};
+// Call the async function to start the server
+startServer();
