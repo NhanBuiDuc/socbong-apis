@@ -3,10 +3,11 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-const { getAllAccounts } = require("./database/models/account");
+const { getAllAccounts } = require("./database/queries_models/account");
 
 // Import required libraries and modules
 const express = require("express"); // Express web framework
+const path = require("path"); // Import the 'path' module
 const bcrypt = require("bcrypt"); // Library for password hashing
 const app = express(); // Initialize Express app
 const passport = require("passport"); // Authentication library
@@ -15,7 +16,8 @@ const session = require("express-session"); // Session management middleware
 const initializePassport = require("./passport-config.js"); // Custom passport configuration
 const methodOverride = require("method-override");
 const authMiddlewares = require("./middlewares/auth");
-const authMiddlewares = require("./middlewares/auth");
+// Configure the 'views' directory
+app.set("views", path.join(__dirname, "views"));
 app.set("view-engine", "ejs"); // Set the view engine to EJS
 app.use(express.json()); // Parse JSON request bodies
 app.use(methodOverride("_method"));
@@ -52,25 +54,11 @@ app.use(passport.initialize()); // Initialize Passport
 // allowing access to user information through 'req.user' in subsequent requests.
 app.use(passport.session()); // Use persistent login sessions
 
-// Initialize Passport with custom function
-initializePassport(
-  passport,
-  (email) => accounts.find((account) => account.email === email),
-  (id) => accounts.find((account) => account.id === id)
-);
-
 const authRoutes = require("./routes/auth");
-// Use the imported route handling logic
-app.use("/auth", authRoutes);
-const authRoutes = require("./routes/auth");
-// Use the imported route handling logic
-app.use("/auth", authRoutes);
+const accountRoutes = require("./routes/account");
 
 // Take note that req.user is the current user of the session
-app.get("/", authMiddlewares.checkAuthenticated, (req, res) => {
-app.get("/", authMiddlewares.checkAuthenticated, (req, res) => {
-  res.render("index.ejs", { name: req.user.name });
-});
+
 const startServer = async () => {
   try {
     // Fetch accounts data using getAllAccounts
@@ -87,6 +75,12 @@ const startServer = async () => {
     // Start the server
     app.listen(3000, () => {
       console.log("Server is running on port 3000");
+
+      app.get("/", authMiddlewares.checkAuthenticated, (req, res) => {
+        res.render("index.ejs", { name: req.user.name });
+      });
+      app.use("/auth", authRoutes);
+      app.use("/account", accountRoutes);
     });
   } catch (error) {
     console.error("Error starting server:", error);
