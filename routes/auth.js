@@ -9,15 +9,15 @@ const {
   checkNotAuthenticated,
 } = require("../middlewares/auth");
 
-// router.get("/register", checkNotAuthenticated, (req, res) => {
-//   console.log("register");
-//   res.render("register.ejs");
-// });
+router.get("/register", checkNotAuthenticated, (req, res) => {
+  console.log("register");
+  res.render("register.ejs");
+});
 
-// router.get("/login", checkNotAuthenticated, (req, res) => {
-//   console.log("login");
-//   res.render("login.ejs");
-// });
+router.get("/login", checkNotAuthenticated, (req, res) => {
+  console.log("login");
+  res.render("login.ejs");
+});
 
 router.post("/register", checkNotAuthenticated, async (req, res) => {
   try {
