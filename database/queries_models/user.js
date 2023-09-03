@@ -14,6 +14,7 @@ const fetchUserById = async (userId) => {
     console.error(error);
   } else {
     console.log(data);
+    return data;
   }
 };
 const insertUser = async (email, password, role) => {
@@ -26,6 +27,7 @@ const insertUser = async (email, password, role) => {
     console.error(error);
   } else {
     console.log("User inserted successfully:", data);
+    return data;
   }
 };
 const getAllUsers = async () => {
@@ -35,11 +37,7 @@ const getAllUsers = async () => {
     console.error(error);
   } else {
     console.log("All users:", data);
-  }
-  if (error) {
-    console.error(error);
-  } else {
-    console.log("All users:", data);
+    return data;
   }
 };
 

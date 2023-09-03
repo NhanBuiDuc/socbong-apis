@@ -12,6 +12,7 @@ export const insertParent = async (parentData) => {
     console.error("Error inserting parent:", error);
   } else {
     console.log("Parent inserted successfully:", data);
+    return data;
   }
 };
 

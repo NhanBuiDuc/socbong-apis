@@ -55,11 +55,12 @@ app.use(passport.initialize()); // Initialize Passport
 app.use(passport.session()); // Use persistent login sessions
 
 // Define the base URL
-const baseUrl = "https://soc-bong-back-end.onrender.com";
 
+// const baseUrl = "https://soc-bong-back-end.onrender.com";
+const baseUrl = "";
 const authRoutes = require("./routes/auth");
 const accountRoutes = require("./routes/account");
-
+const branchRoutes = require("./routes/branch");
 // Take note that req.user is the current user of the session
 
 const startServer = async () => {
@@ -74,17 +75,16 @@ const startServer = async () => {
       (email) => accounts.find((account) => account.email === email),
       (id) => accounts.find((account) => account.id === id)
     );
-
+    app.get("/", authMiddlewares.checkAuthenticated, (req, res) => {
+      res.render("index.ejs", { name: req.user.name });
+    });
+    // Use the base URL for your routes
+    app.use(`${baseUrl}/auth`, authRoutes);
+    app.use(`${baseUrl}/account`, accountRoutes);
+    app.use(`${baseUrl}/branch`, branchRoutes);
     // Start the server
-    app.listen(() => {
+    app.listen(3000, () => {
       console.log("Server is running on Render");
-
-      app.get("/", authMiddlewares.checkAuthenticated, (req, res) => {
-        res.render("index.ejs", { name: req.user.name });
-      });
-      // Use the base URL for your routes
-      app.use(`${baseUrl}/auth`, authRoutes);
-      app.use(`${baseUrl}/account`, accountRoutes);
     });
   } catch (error) {
     console.error("Error starting server:", error);

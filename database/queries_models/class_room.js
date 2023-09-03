@@ -12,6 +12,7 @@ export const insertClassRoom = async (classRoomData) => {
     console.error("Error inserting class room:", error);
   } else {
     console.log("Class room inserted successfully:", data);
+    return data;
   }
 };
 // Re-export all functions using the spread operator

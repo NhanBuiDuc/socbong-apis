@@ -23,6 +23,7 @@ const insertAccount = async (accountData) => {
     console.error("Error inserting account:", error);
   } else {
     console.log("Account inserted successfully:", data);
+    return data;
   }
 };
 module.exports = {

@@ -15,6 +15,7 @@ export const insertStudent = async (studentData) => {
     }
 
     console.log("Student inserted successfully:", data);
+    return data;
   } catch (error) {
     console.error("Error inserting student:", error);
     // console.log('Error data:', studentData); // Print the student data causing the error
