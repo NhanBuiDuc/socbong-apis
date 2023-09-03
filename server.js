@@ -54,6 +54,9 @@ app.use(passport.initialize()); // Initialize Passport
 // allowing access to user information through 'req.user' in subsequent requests.
 app.use(passport.session()); // Use persistent login sessions
 
+// Define the base URL
+const baseUrl = "https://soc-bong-back-end.onrender.com";
+
 const authRoutes = require("./routes/auth");
 const accountRoutes = require("./routes/account");
 
@@ -73,14 +76,15 @@ const startServer = async () => {
     );
 
     // Start the server
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
+    app.listen(() => {
+      console.log("Server is running on Render");
 
       app.get("/", authMiddlewares.checkAuthenticated, (req, res) => {
         res.render("index.ejs", { name: req.user.name });
       });
-      app.use("/auth", authRoutes);
-      app.use("/account", accountRoutes);
+      // Use the base URL for your routes
+      app.use(`${baseUrl}/auth`, authRoutes);
+      app.use(`${baseUrl}/account`, accountRoutes);
     });
   } catch (error) {
     console.error("Error starting server:", error);
